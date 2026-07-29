@@ -14,8 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTotalStudents = 0;
     let hasMore = false;
 
-    // Load initial data (start index 0)
-    loadStudents();
+    // Check URL for search query
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('q');
+    
+    if (queryParam) {
+        searchInput.value = queryParam;
+        performSearch();
+    } else {
+        // Load initial data (start index 0)
+        loadStudents();
+    }
 
     // Search logic
     searchInput.addEventListener('keypress', (e) => {
