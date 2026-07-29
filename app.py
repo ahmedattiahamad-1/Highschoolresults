@@ -102,6 +102,24 @@ def get_students():
         "has_more": end_idx < total_students
     })
 
+@app.route('/robots.txt')
+def robots():
+    content = "User-agent: *\nDisallow:\nSitemap: https://your-domain.com/sitemap.xml"
+    return app.response_class(content, mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    # A basic sitemap telling Google to index the main page
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://your-domain.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>"""
+    return app.response_class(content, mimetype='application/xml')
+
 @app.after_request
 def add_header(response):
     # Prevent browser caching so the user always gets the latest version
