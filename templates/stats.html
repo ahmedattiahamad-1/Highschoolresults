@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إحصائيات نتيجة الثانوية العامة</title>
+    <meta name="description" content="إحصائيات نتيجة الثانوية العامة وأوائل الطلبة.">
+    
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="ph-fill ph-student"></i>
+                <span>نتائج الطلاب</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link"><i class="ph ph-house"></i> الرئيسية</a>
+                <a href="/stats" class="nav-link active"><i class="ph ph-chart-bar"></i> الإحصائيات والأوائل</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
+        <header class="header">
+            <h1>إحصائيات وأوائل الثانوية</h1>
+            <p>ملخص عام لنتائج <span class="highlight">{{ "{:,}".format(total) }}</span> طالب</p>
+        </header>
+
+        <!-- Summary Stats Cards -->
+        <section class="summary-stats">
+            <div class="summary-card total">
+                <div class="icon"><i class="ph-fill ph-users"></i></div>
+                <h3>إجمالي الطلاب</h3>
+                <p class="value">{{ "{:,}".format(total) }}</p>
+            </div>
+            <div class="summary-card success">
+                <div class="icon"><i class="ph-fill ph-check-circle"></i></div>
+                <h3>الناجحون</h3>
+                <p class="value">{{ "{:,}".format(stats.passed) }}</p>
+                <p class="percentage">{{ "%.2f"|format((stats.passed / total * 100) if total else 0) }}%</p>
+            </div>
+            <div class="summary-card danger">
+                <div class="icon"><i class="ph-fill ph-warning-circle"></i></div>
+                <h3>راسب / دور ثاني</h3>
+                <p class="value">{{ "{:,}".format(stats.failed) }}</p>
+                <p class="percentage">{{ "%.2f"|format((stats.failed / total * 100) if total else 0) }}%</p>
+            </div>
+            <div class="summary-card warning">
+                <div class="icon"><i class="ph-fill ph-clock"></i></div>
+                <h3>مؤجل / أخرى</h3>
+                <p class="value">{{ "{:,}".format(stats.postponed) }}</p>
+                <p class="percentage">{{ "%.2f"|format((stats.postponed / total * 100) if total else 0) }}%</p>
+            </div>
+        </section>
+
+        <!-- Top Students -->
+        <section class="top-students-section">
+            <h2 class="section-title"><i class="ph-fill ph-crown"></i> أوائل الجمهورية</h2>
+            
+            <div class="top-students-grid">
+                {% for student in stats.top_students %}
+                <div class="top-student-card">
+                    <div class="rank-badge">المركز #{{ student.rank }}</div>
+                    <div class="student-info">
+                        <h3>{{ student.name }}</h3>
+                        <p class="seating-no">رقم الجلوس: {{ student.seating_no }}</p>
+                    </div>
+                    <div class="student-score">
+                        <div class="score-item">
+                            <span class="label">المجموع</span>
+                            <span class="val"><i class="ph-fill ph-star"></i> {{ student.total_degree }}</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="label">النسبة</span>
+                            <span class="val percentage"><i class="ph-fill ph-chart-pie-slice"></i> {{ student.percentage }}%</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if not stats.top_students %}
+                <div class="no-results">
+                    <p>جاري تحديث بيانات الأوائل...</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

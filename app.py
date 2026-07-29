@@ -12,6 +12,13 @@ total_students = 0
 max_degree = 320 # Hardcoded as requested
 data_file_path = os.path.join(os.path.dirname(__file__), 'data.csv.gz')
 
+stats_data = {
+    'passed': 0,
+    'failed': 0,
+    'postponed': 0,
+    'top_students': []
+}
+
 def normalize_arabic(text):
     if not isinstance(text, str):
         return ""
@@ -27,15 +34,53 @@ def normalize_arabic(text):
     return text
 
 def load_data():
-    global total_students
+    global total_students, stats_data
     print("Loading CSV metadata...")
     if not os.path.exists(data_file_path):
         print(f"File not found: {data_file_path}")
         return
+        
+    passed = 0
+    failed = 0
+    postponed = 0
+    top = []
+    
     with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
         reader = csv.reader(f)
         next(reader) # skip header
-        total_students = sum(1 for _ in reader)
+        count = 0
+        for row in reader:
+            count += 1
+            status = row[3] if row[3] else ''
+            
+            if 'ناجح' in status:
+                passed += 1
+            elif 'راسب' in status or 'دور ثاني' in status:
+                failed += 1
+            else:
+                postponed += 1
+                
+            rank_str = row[4]
+            if rank_str:
+                rank_val = int(float(rank_str))
+                if rank_val <= 10:
+                    deg = float(row[2]) if row[2] else 0
+                    top.append({
+                        "seating_no": row[0],
+                        "name": row[1],
+                        "total_degree": deg,
+                        "percentage": round((deg / max_degree * 100), 2),
+                        "status": status,
+                        "rank": rank_val
+                    })
+                    
+    total_students = count
+    stats_data['passed'] = passed
+    stats_data['failed'] = failed
+    stats_data['postponed'] = postponed
+    top.sort(key=lambda x: x['rank'])
+    stats_data['top_students'] = top
+    
     print(f"Data loaded successfully. Total students: {total_students}")
 
 def format_student(row):
@@ -55,6 +100,10 @@ def format_student(row):
 @app.route('/')
 def index():
     return render_template('index.html', total_students=total_students)
+
+@app.route('/stats')
+def stats_page():
+    return render_template('stats.html', total=total_students, stats=stats_data)
 
 @app.route('/api/students')
 def get_students():

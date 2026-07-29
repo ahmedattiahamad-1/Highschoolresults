@@ -28,6 +28,9 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- html2canvas for downloading cards as images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <!-- Google AdSense Placeholder -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_CLIENT_ID" crossorigin="anonymous"></script>
 </head>
@@ -38,7 +41,21 @@
         <div class="shape shape-3"></div>
     </div>
 
-    <main class="container">
+    <!-- Main Navigation Header -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="ph-fill ph-student"></i>
+                <span>نتائج الطلاب</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link active"><i class="ph ph-house"></i> الرئيسية</a>
+                <a href="/stats" class="nav-link"><i class="ph ph-chart-bar"></i> الإحصائيات والأوائل</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
         <header class="header">
             <div class="logo">
                 <i class="ph-fill ph-student"></i>

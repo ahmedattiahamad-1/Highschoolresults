@@ -167,15 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="rank-label">الترتيب</span>
                     <span class="rank-value">#${formattedRank}</span>
                     <span class="rank-total">من ${formattedTotal} طالب</span>
-                    
-                    <div class="card-actions">
-                        <button class="action-btn print-btn" onclick="window.print()" title="طباعة النتيجة">
-                            <i class="ph ph-printer"></i> طباعة
-                        </button>
-                        <button class="action-btn share-btn" onclick="shareResult('${student.name}', '${student.percentage}', '${student.seating_no}')" title="مشاركة النتيجة">
-                            <i class="ph ph-share-network"></i> مشاركة
-                        </button>
-                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="action-btn download-btn" onclick="downloadCard(this, '${student.name}')" title="تحميل النتيجة كصورة">
+                        <i class="ph ph-download-simple"></i> تحميل
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareResult('${student.name}', '${student.percentage}', '${student.seating_no}')" title="مشاركة النتيجة">
+                        <i class="ph ph-share-network"></i> مشاركة
+                    </button>
                 </div>
             `;
             
@@ -197,5 +197,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(() => alert('تم نسخ رابط النتيجة بنجاح!'))
                 .catch(err => console.error('فشل النسخ', err));
         }
+    };
+
+    // Download card as image
+    window.downloadCard = function(btnElement, studentName) {
+        // Find the parent card
+        const card = btnElement.closest('.student-card');
+        if (!card) return;
+        
+        // Hide actions temporarily
+        const actions = card.querySelector('.card-actions');
+        if (actions) actions.style.display = 'none';
+        
+        // Add a temporary class to fix some styles for the image (like box-shadow which might render weirdly)
+        const originalBoxShadow = card.style.boxShadow;
+        card.style.boxShadow = 'none';
+        card.style.border = '1px solid #e5e7eb';
+        
+        // Convert to image
+        html2canvas(card, {
+            scale: 2, // High resolution
+            backgroundColor: '#ffffff',
+            useCORS: true
+        }).then(canvas => {
+            // Restore actions and styles
+            if (actions) actions.style.display = 'flex';
+            card.style.boxShadow = originalBoxShadow;
+            if (originalBoxShadow === '') card.style.border = '';
+            
+            // Download the image
+            const link = document.createElement('a');
+            link.download = `نتيجة_${studentName.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(err => {
+            console.error('Error generating image:', err);
+            // Restore anyway on error
+            if (actions) actions.style.display = 'flex';
+            card.style.boxShadow = originalBoxShadow;
+            if (originalBoxShadow === '') card.style.border = '';
+            alert('حدث خطأ أثناء تحميل الصورة.');
+        });
     };
 });
