@@ -16,7 +16,8 @@ stats_data = {
     'passed': 0,
     'failed': 0,
     'postponed': 0,
-    'top_students': []
+    'top_students': [],
+    'degree_counts': {}
 }
 
 def normalize_arabic(text):
@@ -44,6 +45,7 @@ def load_data():
     failed = 0
     postponed = 0
     top = []
+    degree_counts = {}
     
     with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
         reader = csv.reader(f)
@@ -59,6 +61,11 @@ def load_data():
                 failed += 1
             else:
                 postponed += 1
+                
+            deg_str = row[2]
+            if deg_str:
+                deg = float(deg_str)
+                degree_counts[deg] = degree_counts.get(deg, 0) + 1
                 
             rank_str = row[4]
             if rank_str:
@@ -80,6 +87,7 @@ def load_data():
     stats_data['postponed'] = postponed
     top.sort(key=lambda x: x['rank'])
     stats_data['top_students'] = top
+    stats_data['degree_counts'] = degree_counts
     
     print(f"Data loaded successfully. Total students: {total_students}")
 

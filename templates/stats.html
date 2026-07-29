@@ -66,6 +66,22 @@
             </div>
         </section>
 
+        <!-- Rank Calculator -->
+        <section class="rank-calculator-section" style="background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 3rem; text-align: center; box-shadow: var(--shadow-sm);">
+            <h2 class="section-title" style="justify-content: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك بناءً على المجموع أو النسبة</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">أدخل مجموعك أو نسبتك المئوية لمعرفة الترتيب التقريبي على مستوى الجمهورية.</p>
+            
+            <div class="calc-inputs" style="display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;">
+                <input type="number" id="degreeInput" placeholder="أدخل المجموع (مثال: 300)" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
+                <input type="number" id="percentageInput" placeholder="أو النسبة %" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
+                <button id="calcRankBtn" class="search-btn" style="border-radius: 99px; padding: 0.75rem 1.5rem;">احسب الترتيب</button>
+            </div>
+            
+            <div id="calcResult" style="margin-top: 1.5rem; font-size: 1.2rem; font-weight: 700; color: var(--primary); display: none;">
+                ترتيبك المتوقع هو: <span id="expectedRank" style="font-size: 2rem; color: #f59e0b;"></span> من {{ "{:,}".format(total) }} طالب
+            </div>
+        </section>
+
         <!-- Top Students -->
         <section class="top-students-section">
             <h2 class="section-title"><i class="ph-fill ph-crown"></i> أوائل الجمهورية</h2>
@@ -100,5 +116,57 @@
         </section>
     </main>
 
+    <script>
+        // Pass degree counts from Flask
+        const degreeCounts = {{ stats.degree_counts | tojson }};
+        const maxDegree = 320; // Matches backend
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const degreeInput = document.getElementById('degreeInput');
+            const percentageInput = document.getElementById('percentageInput');
+            const calcRankBtn = document.getElementById('calcRankBtn');
+            const calcResult = document.getElementById('calcResult');
+            const expectedRank = document.getElementById('expectedRank');
+            
+            // Sync inputs
+            degreeInput.addEventListener('input', () => {
+                if (degreeInput.value) {
+                    const deg = parseFloat(degreeInput.value);
+                    percentageInput.value = ((deg / maxDegree) * 100).toFixed(2);
+                } else {
+                    percentageInput.value = '';
+                }
+            });
+            
+            percentageInput.addEventListener('input', () => {
+                if (percentageInput.value) {
+                    const perc = parseFloat(percentageInput.value);
+                    degreeInput.value = ((perc / 100) * maxDegree).toFixed(2);
+                } else {
+                    degreeInput.value = '';
+                }
+            });
+            
+            // Calculate rank
+            calcRankBtn.addEventListener('click', () => {
+                const targetDegree = parseFloat(degreeInput.value);
+                if (isNaN(targetDegree) || targetDegree < 0 || targetDegree > maxDegree) {
+                    alert('يرجى إدخال مجموع صحيح بين 0 و ' + maxDegree);
+                    return;
+                }
+                
+                let rank = 1;
+                for (let degStr in degreeCounts) {
+                    const degVal = parseFloat(degStr);
+                    if (degVal > targetDegree) {
+                        rank += degreeCounts[degStr];
+                    }
+                }
+                
+                expectedRank.textContent = '#' + rank.toLocaleString('ar-EG');
+                calcResult.style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>
