@@ -1,15 +1,15 @@
 import os
-import pandas as pd
-# pyrefly: ignore [missing-import]
+import gzip
+import csv
 from flask import Flask, request, jsonify, render_template
 import re
+import itertools
 
 app = Flask(__name__)
 
-# Global variables to store dataframe
-df = None
 total_students = 0
 max_degree = 320 # Hardcoded as requested
+data_file_path = os.path.join(os.path.dirname(__file__), 'data.csv.gz')
 
 def normalize_arabic(text):
     if not isinstance(text, str):
@@ -26,37 +26,29 @@ def normalize_arabic(text):
     return text
 
 def load_data():
-    global df, total_students
-    print("Loading CSV file...")
-    file_path = os.path.join(os.path.dirname(__file__), 'data.csv')
-    df = pd.read_csv(file_path)
-    
-    # Calculate rank based on total_degree
-    df['rank'] = df['total_degree'].rank(method='min', ascending=False)
-    
-    # Sort dataframe by seating_no ascending, then reset index so we can jump to row numbers
-    df.sort_values(by=['seating_no'], inplace=True, ascending=[True])
-    df.reset_index(drop=True, inplace=True)
-    
-    # Preprocess columns for easier searching
-    df['seating_no'] = df['seating_no'].astype(str)
-    df['arabic_name'] = df['arabic_name'].fillna('').astype(str)
-    df['normalized_name'] = df['arabic_name'].apply(normalize_arabic)
-    
-    total_students = len(df)
-    
+    global total_students
+    print("Loading CSV metadata...")
+    if not os.path.exists(data_file_path):
+        print(f"File not found: {data_file_path}")
+        return
+    with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        next(reader) # skip header
+        total_students = sum(1 for _ in reader)
     print(f"Data loaded successfully. Total students: {total_students}")
 
 def format_student(row):
-    deg = row.get('total_degree', 0)
-    percentage = (deg / max_degree) * 100 if pd.notnull(deg) else 0
+    deg_str = row[2]
+    deg = float(deg_str) if deg_str else 0
+    percentage = (deg / max_degree) * 100
+    
     return {
-        "seating_no": row['seating_no'],
-        "name": row['arabic_name'],
+        "seating_no": row[0],
+        "name": row[1],
         "total_degree": deg,
         "percentage": round(percentage, 2),
-        "status": row.get('student_case_desc', 'غير محدد'),
-        "rank": int(row['rank']) if pd.notnull(row['rank']) else 0
+        "status": row[3] if row[3] else 'غير محدد',
+        "rank": int(float(row[4])) if row[4] else 0
     }
 
 @app.route('/')
@@ -69,32 +61,35 @@ def get_students():
     start_idx = int(request.args.get('start', 0))
     per_page = 10
     
-    # If a search query is provided, we find the first match and use its index as start_idx
     if query:
-        # Search by exact seating number first
-        match_idx = df.index[df['seating_no'] == query].tolist()
-        
-        # If no match by seating number, search by normalized name
-        if not match_idx:
-            norm_query = normalize_arabic(query)
-            # Find first occurrence where normalized name contains the query
-            match_series = df['normalized_name'].str.contains(norm_query, case=False, na=False)
-            if match_series.any():
-                match_idx = [match_series.idxmax()] # idxmax returns the first True index
-                
-        if match_idx:
-            start_idx = match_idx[0]
+        norm_query = normalize_arabic(query)
+        match_idx = -1
+        with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)
+            for i, row in enumerate(reader):
+                if query == row[0] or norm_query in row[5]:
+                    match_idx = i
+                    break
+                    
+        if match_idx != -1:
+            start_idx = match_idx
         else:
-            # No results found for query
             return jsonify({"results": [], "total_students": total_students, "start_idx": 0})
             
     # Ensure start_idx is within bounds
     start_idx = max(0, min(start_idx, total_students - 1))
-    end_idx = min(start_idx + per_page, total_students)
     
-    page_data = df.iloc[start_idx:end_idx]
-    results = [format_student(row) for _, row in page_data.iterrows()]
+    results = []
+    with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        next(reader)
+        # Advance iterator to start_idx and take per_page items
+        page_iter = itertools.islice(reader, start_idx, start_idx + per_page)
+        for row in page_iter:
+            results.append(format_student(row))
     
+    end_idx = start_idx + len(results)
     return jsonify({
         "results": results, 
         "total_students": total_students,
