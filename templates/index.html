@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Google AdSense Placeholder -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_CLIENT_ID" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="background-shapes">
@@ -43,6 +46,19 @@
             <h1>نتائج الطلاب</h1>
             <p>إجمالي عدد الطلاب: <span class="highlight">{{ "{:,}".format(total_students) }}</span> طالب</p>
         </header>
+        
+        <!-- AdSense Ad Unit (Top) -->
+        <div class="ad-container" style="text-align: center; margin-bottom: 2rem; min-height: 90px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_AD_CLIENT_ID"
+                 data-ad-slot="YOUR_AD_SLOT_ID"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
 
         <section id="searchSection" class="search-section">
             <div class="search-box">
