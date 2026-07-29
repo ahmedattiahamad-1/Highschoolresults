@@ -47,6 +47,14 @@
             <p>إجمالي عدد الطلاب: <span class="highlight">{{ "{:,}".format(total_students) }}</span> طالب</p>
         </header>
         
+        <section id="searchSection" class="search-section">
+            <div class="search-box">
+                <i class="ph ph-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="ابحث برقم الجلوس أو اسم الطالب (حتى مع أخطاء إملائية)..." autocomplete="off">
+                <button id="searchBtn" class="search-btn">بحث / انتقال</button>
+            </div>
+        </section>
+
         <!-- AdSense Ad Unit (Top) -->
         <div class="ad-container" style="text-align: center; margin-bottom: 2rem; min-height: 90px;">
             <ins class="adsbygoogle"
@@ -59,14 +67,6 @@
                  (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
         </div>
-
-        <section id="searchSection" class="search-section">
-            <div class="search-box">
-                <i class="ph ph-magnifying-glass search-icon"></i>
-                <input type="text" id="searchInput" placeholder="ابحث برقم الجلوس أو اسم الطالب (حتى مع أخطاء إملائية)..." autocomplete="off">
-                <button id="searchBtn" class="search-btn">بحث / انتقال</button>
-            </div>
-        </section>
 
         <div class="loading-indicator" id="loadingIndicator">
             <div class="spinner"></div>

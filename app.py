@@ -34,8 +34,8 @@ def load_data():
     # Calculate rank based on total_degree
     df['rank'] = df['total_degree'].rank(method='min', ascending=False)
     
-    # Sort dataframe by rank ascending, then reset index so we can jump to row numbers
-    df.sort_values(by=['rank', 'seating_no'], inplace=True, ascending=[True, True])
+    # Sort dataframe by seating_no ascending, then reset index so we can jump to row numbers
+    df.sort_values(by=['seating_no'], inplace=True, ascending=[True])
     df.reset_index(drop=True, inplace=True)
     
     # Preprocess columns for easier searching
