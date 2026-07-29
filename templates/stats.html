@@ -39,33 +39,6 @@
             <p>ملخص عام لنتائج <span class="highlight">{{ "{:,}".format(total) }}</span> طالب</p>
         </header>
 
-        <!-- Summary Stats Cards -->
-        <section class="summary-stats">
-            <div class="summary-card total">
-                <div class="icon"><i class="ph-fill ph-users"></i></div>
-                <h3>إجمالي الطلاب</h3>
-                <p class="value">{{ "{:,}".format(total) }}</p>
-            </div>
-            <div class="summary-card success">
-                <div class="icon"><i class="ph-fill ph-check-circle"></i></div>
-                <h3>الناجحون</h3>
-                <p class="value">{{ "{:,}".format(stats.passed) }}</p>
-                <p class="percentage">{{ "%.2f"|format((stats.passed / total * 100) if total else 0) }}%</p>
-            </div>
-            <div class="summary-card danger">
-                <div class="icon"><i class="ph-fill ph-warning-circle"></i></div>
-                <h3>راسب / دور ثاني</h3>
-                <p class="value">{{ "{:,}".format(stats.failed) }}</p>
-                <p class="percentage">{{ "%.2f"|format((stats.failed / total * 100) if total else 0) }}%</p>
-            </div>
-            <div class="summary-card warning">
-                <div class="icon"><i class="ph-fill ph-clock"></i></div>
-                <h3>مؤجل / أخرى</h3>
-                <p class="value">{{ "{:,}".format(stats.postponed) }}</p>
-                <p class="percentage">{{ "%.2f"|format((stats.postponed / total * 100) if total else 0) }}%</p>
-            </div>
-        </section>
-
         <!-- Rank Calculator -->
         <section class="rank-calculator-section" style="background: var(--card-bg); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 2rem; text-align: center; box-shadow: var(--shadow-sm);">
             <h2 class="section-title" style="justify-content: center; text-align: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك واعرف الإحصائيات لمجموعك</h2>
