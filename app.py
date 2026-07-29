@@ -56,7 +56,7 @@ def load_data():
             status = row[3] if row[3] else ''
             
             is_passed = 'ناجح' in status
-            is_failed = 'راسب' in status or 'دور ثاني' in status
+            is_failed = 'راسب' in status or 'دور ثان' in status
             
             if is_passed:
                 passed += 1
