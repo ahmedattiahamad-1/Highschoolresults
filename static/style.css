@@ -460,23 +460,78 @@ body {
 }
 
 @media (max-width: 640px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .logo {
+        font-size: 2.5rem;
+    }
+    
+    .search-box {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .search-box input {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .search-icon {
+        display: none;
+    }
+    
+    .search-btn {
+        width: 100%;
+        border-radius: 12px;
+    }
+    
     .student-card {
         grid-template-columns: 1fr;
+        padding: 1.5rem;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
     
     .rank-container {
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
         padding: 1rem;
         min-width: auto;
     }
     
     .rank-value {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         margin: 0;
     }
+    
+    .pagination-section {
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 20px;
+    }
+    
+    .page-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .page-info {
+        width: 100%;
+        text-align: center;
+        order: -1;
+    }
 }
+
