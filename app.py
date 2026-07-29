@@ -128,6 +128,8 @@ def add_header(response):
     response.headers['Expires'] = '-1'
     return response
 
+# Load data unconditionally so it works on WSGI servers (Vercel, Render, Gunicorn)
+load_data()
+
 if __name__ == '__main__':
-    load_data()
     app.run(host='127.0.0.1', port=5001, debug=False)
