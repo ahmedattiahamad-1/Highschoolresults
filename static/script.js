@@ -224,28 +224,69 @@ document.addEventListener('DOMContentLoaded', () => {
             origFill = rankValue.style.webkitTextFillColor;
             origBg = rankValue.style.background;
             origColor = rankValue.style.color;
-            
             rankValue.style.background = 'none';
             rankValue.style.webkitTextFillColor = 'initial';
             rankValue.style.color = '#4f46e5'; // Solid primary color
         }
         
-        // Remove backdrop filter which can cause rendering issues
+        // Save original styles
+        const origOpacity = card.style.opacity;
+        const origTransform = card.style.transform;
+        const origAnimation = card.style.animation;
+        const origTransition = card.style.transition;
         const origBackdrop = card.style.backdropFilter;
         const origWebkitBackdrop = card.style.webkitBackdropFilter;
         const origBoxShadow = card.style.boxShadow;
+        const origBorder = card.style.border;
+        const origBackground = card.style.background;
+        
+        // Force fully opaque, no animations, and solid background
+        card.style.opacity = '1';
+        card.style.transform = 'none';
+        card.style.animation = 'none';
+        card.style.transition = 'none';
         card.style.backdropFilter = 'none';
         card.style.webkitBackdropFilter = 'none';
         card.style.boxShadow = 'none';
-        card.style.border = '1px solid #e5e7eb';
-        card.style.background = '#ffffff'; // Force white background for the image
+        card.style.border = '2px solid #e5e7eb';
+        card.style.background = '#ffffff'; 
         
+        // Force explicit colors for all text to defeat dark mode or variable inheritance issues
+        const allTextElements = card.querySelectorAll('h2, p.seating-no, .stat-label, .stat-value, .rank-label, .rank-total');
+        const origColors = new Map();
+        allTextElements.forEach(el => {
+            origColors.set(el, el.style.color);
+            if (el.classList.contains('stat-label') || el.classList.contains('rank-label') || el.classList.contains('rank-total')) {
+                el.style.color = '#4b5563'; // Darker gray for labels
+            } else if (el.tagName === 'H2' || el.classList.contains('stat-value') || el.classList.contains('seating-no')) {
+                el.style.color = '#111827'; // Almost black for text
+            }
+        });
+        
+        // Explicitly color the seating badge
+        const badgeEl = card.querySelector('.seating-badge');
+        let origBadgeBg = '', origBadgeColor = '';
+        if (badgeEl) {
+            origBadgeBg = badgeEl.style.backgroundColor;
+            origBadgeColor = badgeEl.style.color;
+            badgeEl.style.backgroundColor = '#f3f4f6';
+            badgeEl.style.color = '#4f46e5';
+        }
+        
+        // Explicitly color status badges
+        card.querySelectorAll('.stat-value').forEach(el => {
+            if(el.classList.contains('percentage-badge')) el.style.color = '#4f46e5';
+            if(el.classList.contains('status-success')) el.style.color = '#10b981';
+            if(el.classList.contains('status-danger')) el.style.color = '#ef4444';
+            if(el.classList.contains('status-warning')) el.style.color = '#f59e0b';
+        });
+
         // Create watermark
         const watermark = document.createElement('div');
-        watermark.innerHTML = `تم الاستعلام عبر موقع: <strong>https://highschoolresults.vercel.app</strong>`;
+        watermark.innerHTML = `تم الاستعلام عبر موقع: <strong style="color:#4f46e5;">https://highschoolresults.vercel.app</strong>`;
         watermark.style.textAlign = 'center';
-        watermark.style.padding = '12px';
-        watermark.style.color = '#4f46e5';
+        watermark.style.padding = '15px';
+        watermark.style.color = '#4b5563';
         watermark.style.fontSize = '14px';
         watermark.style.borderTop = '2px dashed #e5e7eb';
         watermark.style.marginTop = '20px';
@@ -254,10 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Convert to image
         html2canvas(card, {
-            scale: 2, 
+            scale: 3, // Even higher resolution for perfect sharpness
             backgroundColor: '#ffffff',
             useCORS: true,
-            logging: false
+            logging: false,
+            allowTaint: true
         }).then(canvas => {
             // Restore card styles
             card.removeChild(watermark);
@@ -269,20 +311,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 rankValue.style.color = origColor;
             }
             
+            card.style.opacity = origOpacity;
+            card.style.transform = origTransform;
+            card.style.animation = origAnimation;
+            card.style.transition = origTransition;
             card.style.backdropFilter = origBackdrop;
             card.style.webkitBackdropFilter = origWebkitBackdrop;
             card.style.boxShadow = origBoxShadow;
-            card.style.border = '';
-            card.style.background = '';
+            card.style.border = origBorder;
+            card.style.background = origBackground;
+            
+            allTextElements.forEach(el => {
+                el.style.color = origColors.get(el);
+            });
+            
+            if (badgeEl) {
+                badgeEl.style.backgroundColor = origBadgeBg;
+                badgeEl.style.color = origBadgeColor;
+            }
             
             // Download
             const link = document.createElement('a');
             link.download = `نتيجة_${studentName.replace(/\s+/g, '_')}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         }).catch(err => {
             console.error('Error generating image:', err);
-            // Restore card on error
+            // Restore on error
             if (watermark.parentNode) card.removeChild(watermark);
             if (actions) actions.style.display = 'flex';
             if (rankValue) {
@@ -290,12 +345,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 rankValue.style.background = origBg;
                 rankValue.style.color = origColor;
             }
+            card.style.opacity = origOpacity;
+            card.style.transform = origTransform;
+            card.style.animation = origAnimation;
+            card.style.transition = origTransition;
             card.style.backdropFilter = origBackdrop;
             card.style.webkitBackdropFilter = origWebkitBackdrop;
             card.style.boxShadow = origBoxShadow;
-            card.style.border = '';
-            card.style.background = '';
-            
+            card.style.border = origBorder;
+            card.style.background = origBackground;
+            allTextElements.forEach(el => { el.style.color = origColors.get(el); });
+            if (badgeEl) { badgeEl.style.backgroundColor = origBadgeBg; badgeEl.style.color = origBadgeColor; }
             alert('حدث خطأ أثناء تحميل الصورة.');
         });
     };
