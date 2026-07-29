@@ -67,15 +67,14 @@
         </section>
 
         <!-- Rank Calculator -->
-        <!-- Rank Calculator -->
-        <section class="rank-calculator-section" style="background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 3rem; text-align: center; box-shadow: var(--shadow-sm);">
-            <h2 class="section-title" style="justify-content: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك واعرف الإحصائيات لمجموعك</h2>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">أدخل مجموعك أو نسبتك المئوية لمعرفة الترتيب التقريبي وعدد الطلاب الحاصلين على نفس المجموع أو أعلى منه مع تفاصيل حالتهم.</p>
+        <section class="rank-calculator-section" style="background: var(--card-bg); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 2rem; text-align: center; box-shadow: var(--shadow-sm);">
+            <h2 class="section-title" style="justify-content: center; text-align: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك واعرف الإحصائيات لمجموعك</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">أدخل مجموعك أو نسبتك المئوية لمعرفة الترتيب التقريبي وعدد الطلاب الحاصلين على نفس المجموع أو أعلى منه مع تفاصيل حالتهم.</p>
             
-            <div class="calc-inputs" style="display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;">
-                <input type="number" id="degreeInput" placeholder="أدخل المجموع (مثال: 300)" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
-                <input type="number" id="percentageInput" placeholder="أو النسبة %" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
-                <button id="calcRankBtn" class="search-btn" style="border-radius: 99px; padding: 0.75rem 1.5rem;">بحث</button>
+            <div class="calc-inputs" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-width: 600px; margin: 0 auto;">
+                <input type="number" id="degreeInput" placeholder="أدخل المجموع (مثال: 300)" style="flex: 1; min-width: 200px; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center; font-size: 1rem;">
+                <input type="number" id="percentageInput" placeholder="أو النسبة %" style="flex: 1; min-width: 200px; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center; font-size: 1rem;">
+                <button id="calcRankBtn" class="search-btn" style="border-radius: 99px; padding: 0.75rem 2rem; flex-grow: 1; min-width: 200px;">بحث</button>
             </div>
             
             <div id="calcResult" style="margin-top: 2rem; display: none; text-align: right; background: rgba(79, 70, 229, 0.05); padding: 1.5rem; border-radius: 15px; border: 1px solid rgba(79, 70, 229, 0.1);">
