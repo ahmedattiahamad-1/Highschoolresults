@@ -171,6 +171,9 @@ body {
     margin-bottom: 2rem;
     animation: fadeInUp 0.8s ease-out 0.2s forwards;
     opacity: 0;
+    position: sticky;
+    top: 1rem;
+    z-index: 100;
 }
 
 .search-box {
@@ -257,8 +260,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 80px; /* Space for the floating pagination dock */
 }
 
 .student-card {
@@ -372,23 +373,19 @@ body {
 
 /* Pagination */
 .pagination-section {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 600px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 0.75rem 1.5rem;
-    border-radius: 99px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
     border: 1px solid var(--glass-border);
-    z-index: 1000;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .pagination-section.hidden {
@@ -553,10 +550,9 @@ body {
     }
     
     .pagination-section {
-        width: calc(100% - 20px);
-        bottom: 25px;
-        padding: 0.5rem;
-        border-radius: 20px;
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 15px;
         flex-direction: row;
         justify-content: space-between;
     }
@@ -572,10 +568,6 @@ body {
         padding: 0.3rem 0.5rem;
         order: 0;
         width: auto;
-    }
-    
-    .results-container {
-        padding-bottom: 100px;
     }
 }
 
