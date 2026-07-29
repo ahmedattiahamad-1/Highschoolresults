@@ -210,17 +210,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Download card as image
     window.downloadCard = function(btnElement, studentName) {
-        const originalCard = btnElement.closest('.student-card');
-        if (!originalCard) return;
+        const card = btnElement.closest('.student-card');
+        if (!card) return;
         
-        // Clone the card for capturing
-        const cardClone = originalCard.cloneNode(true);
+        // Hide actions
+        const actions = card.querySelector('.card-actions');
+        if (actions) actions.style.display = 'none';
         
-        // Remove the action buttons from the clone
-        const actions = cardClone.querySelector('.card-actions');
-        if (actions) actions.remove();
+        // Fix gradient text issue in html2canvas (rank value)
+        const rankValue = card.querySelector('.rank-value');
+        let origFill = '', origBg = '', origColor = '';
+        if (rankValue) {
+            origFill = rankValue.style.webkitTextFillColor;
+            origBg = rankValue.style.background;
+            origColor = rankValue.style.color;
+            
+            rankValue.style.background = 'none';
+            rankValue.style.webkitTextFillColor = 'initial';
+            rankValue.style.color = '#4f46e5'; // Solid primary color
+        }
         
-        // Create a watermark element
+        // Remove backdrop filter which can cause rendering issues
+        const origBackdrop = card.style.backdropFilter;
+        const origWebkitBackdrop = card.style.webkitBackdropFilter;
+        const origBoxShadow = card.style.boxShadow;
+        card.style.backdropFilter = 'none';
+        card.style.webkitBackdropFilter = 'none';
+        card.style.boxShadow = 'none';
+        card.style.border = '1px solid #e5e7eb';
+        card.style.background = '#ffffff'; // Force white background for the image
+        
+        // Create watermark
         const watermark = document.createElement('div');
         watermark.innerHTML = `تم الاستعلام عبر موقع: <strong>https://highschoolresults.vercel.app</strong>`;
         watermark.style.textAlign = 'center';
@@ -230,69 +250,52 @@ document.addEventListener('DOMContentLoaded', () => {
         watermark.style.borderTop = '2px dashed #e5e7eb';
         watermark.style.marginTop = '20px';
         watermark.style.direction = 'rtl';
-        cardClone.appendChild(watermark);
-        
-        // Fix gradient text issue in html2canvas (rank value)
-        const rankValue = cardClone.querySelector('.rank-value');
-        if (rankValue) {
-            rankValue.style.background = 'none';
-            rankValue.style.webkitTextFillColor = 'initial';
-            rankValue.style.color = '#4f46e5'; // Solid primary color
-        }
-        
-        // Ensure card clone has explicit styles for capture
-        cardClone.style.position = 'absolute';
-        cardClone.style.left = '-9999px';
-        cardClone.style.top = '0';
-        cardClone.style.width = originalCard.offsetWidth + 'px'; 
-        cardClone.style.backgroundColor = '#ffffff';
-        cardClone.style.color = '#1f2937';
-        cardClone.style.borderRadius = '20px';
-        cardClone.style.boxShadow = 'none';
-        cardClone.style.border = '2px solid #e5e7eb';
-        cardClone.style.padding = '24px';
-        cardClone.style.margin = '0';
-        cardClone.style.direction = 'rtl';
-        
-        // Explicitly set text colors for stat values in clone
-        const statValues = cardClone.querySelectorAll('.stat-value');
-        statValues.forEach(el => {
-            el.style.color = '#1f2937';
-            if(el.classList.contains('percentage-badge')) el.style.color = '#4f46e5';
-            if(el.classList.contains('status-success')) el.style.color = '#10b981';
-            if(el.classList.contains('status-danger')) el.style.color = '#ef4444';
-            if(el.classList.contains('status-warning')) el.style.color = '#f59e0b';
-        });
-
-        // Add explicit color for student name and badge
-        const nameEl = cardClone.querySelector('h2');
-        if (nameEl) nameEl.style.color = '#1f2937';
-        const badgeEl = cardClone.querySelector('.seating-badge');
-        if (badgeEl) {
-            badgeEl.style.backgroundColor = '#f3f4f6';
-            badgeEl.style.color = '#4f46e5';
-        }
-
-        document.body.appendChild(cardClone);
+        card.appendChild(watermark);
         
         // Convert to image
-        html2canvas(cardClone, {
+        html2canvas(card, {
             scale: 2, 
             backgroundColor: '#ffffff',
             useCORS: true,
             logging: false
         }).then(canvas => {
-            document.body.removeChild(cardClone);
+            // Restore card styles
+            card.removeChild(watermark);
+            if (actions) actions.style.display = 'flex';
             
+            if (rankValue) {
+                rankValue.style.webkitTextFillColor = origFill;
+                rankValue.style.background = origBg;
+                rankValue.style.color = origColor;
+            }
+            
+            card.style.backdropFilter = origBackdrop;
+            card.style.webkitBackdropFilter = origWebkitBackdrop;
+            card.style.boxShadow = origBoxShadow;
+            card.style.border = '';
+            card.style.background = '';
+            
+            // Download
             const link = document.createElement('a');
             link.download = `نتيجة_${studentName.replace(/\s+/g, '_')}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
         }).catch(err => {
             console.error('Error generating image:', err);
-            if (document.body.contains(cardClone)) {
-                document.body.removeChild(cardClone);
+            // Restore card on error
+            if (watermark.parentNode) card.removeChild(watermark);
+            if (actions) actions.style.display = 'flex';
+            if (rankValue) {
+                rankValue.style.webkitTextFillColor = origFill;
+                rankValue.style.background = origBg;
+                rankValue.style.color = origColor;
             }
+            card.style.backdropFilter = origBackdrop;
+            card.style.webkitBackdropFilter = origWebkitBackdrop;
+            card.style.boxShadow = origBoxShadow;
+            card.style.border = '';
+            card.style.background = '';
+            
             alert('حدث خطأ أثناء تحميل الصورة.');
         });
     };
