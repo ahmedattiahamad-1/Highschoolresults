@@ -67,18 +67,47 @@
         </section>
 
         <!-- Rank Calculator -->
+        <!-- Rank Calculator -->
         <section class="rank-calculator-section" style="background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 3rem; text-align: center; box-shadow: var(--shadow-sm);">
-            <h2 class="section-title" style="justify-content: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك بناءً على المجموع أو النسبة</h2>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">أدخل مجموعك أو نسبتك المئوية لمعرفة الترتيب التقريبي على مستوى الجمهورية.</p>
+            <h2 class="section-title" style="justify-content: center;"><i class="ph-fill ph-calculator"></i> احسب ترتيبك واعرف الإحصائيات لمجموعك</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">أدخل مجموعك أو نسبتك المئوية لمعرفة الترتيب التقريبي وعدد الطلاب الحاصلين على نفس المجموع أو أعلى منه مع تفاصيل حالتهم.</p>
             
             <div class="calc-inputs" style="display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;">
                 <input type="number" id="degreeInput" placeholder="أدخل المجموع (مثال: 300)" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
                 <input type="number" id="percentageInput" placeholder="أو النسبة %" style="flex: 1; padding: 0.75rem; border-radius: 99px; border: 1px solid var(--glass-border); outline: none; font-family: inherit; text-align: center;">
-                <button id="calcRankBtn" class="search-btn" style="border-radius: 99px; padding: 0.75rem 1.5rem;">احسب الترتيب</button>
+                <button id="calcRankBtn" class="search-btn" style="border-radius: 99px; padding: 0.75rem 1.5rem;">بحث</button>
             </div>
             
-            <div id="calcResult" style="margin-top: 1.5rem; font-size: 1.2rem; font-weight: 700; color: var(--primary); display: none;">
-                ترتيبك المتوقع هو: <span id="expectedRank" style="font-size: 2rem; color: #f59e0b;"></span> من {{ "{:,}".format(total) }} طالب
+            <div id="calcResult" style="margin-top: 2rem; display: none; text-align: right; background: rgba(79, 70, 229, 0.05); padding: 1.5rem; border-radius: 15px; border: 1px solid rgba(79, 70, 229, 0.1);">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--primary);">ترتيبك المتوقع هو</div>
+                    <div id="expectedRank" style="font-size: 3rem; color: #f59e0b; font-weight: 800; line-height: 1;"></div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;">من إجمالي {{ "{:,}".format(total) }} طالب</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <!-- Exact Match Stats -->
+                    <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <h4 style="color: var(--primary-dark); margin-bottom: 0.5rem; font-size: 1.1rem; text-align: center;">الحاصلون على نفس المجموع</h4>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 0.5rem;" id="exactTotal">0</div>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-muted);">
+                            <li style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;"><span>ناجح:</span> <strong style="color: #10b981;" id="exactPassed">0</strong></li>
+                            <li style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;"><span>راسب/دور ثاني:</span> <strong style="color: #ef4444;" id="exactFailed">0</strong></li>
+                            <li style="display: flex; justify-content: space-between;"><span>مؤجل/أخرى:</span> <strong style="color: #f59e0b;" id="exactPostponed">0</strong></li>
+                        </ul>
+                    </div>
+
+                    <!-- Higher Stats -->
+                    <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <h4 style="color: var(--primary-dark); margin-bottom: 0.5rem; font-size: 1.1rem; text-align: center;">الحاصلون على مجموع أعلى</h4>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b; text-align: center; margin-bottom: 0.5rem;" id="higherTotal">0</div>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-muted);">
+                            <li style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;"><span>ناجح:</span> <strong style="color: #10b981;" id="higherPassed">0</strong></li>
+                            <li style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;"><span>راسب/دور ثاني:</span> <strong style="color: #ef4444;" id="higherFailed">0</strong></li>
+                            <li style="display: flex; justify-content: space-between;"><span>مؤجل/أخرى:</span> <strong style="color: #f59e0b;" id="higherPostponed">0</strong></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -117,8 +146,8 @@
     </main>
 
     <script>
-        // Pass degree counts from Flask
-        const degreeCounts = {{ stats.degree_counts | tojson }};
+        // Pass detailed degree stats from Flask
+        const degreeStats = {{ stats.degree_stats | tojson }};
         const maxDegree = 320; // Matches backend
         
         document.addEventListener('DOMContentLoaded', () => {
@@ -147,7 +176,7 @@
                 }
             });
             
-            // Calculate rank
+            // Calculate detailed stats
             calcRankBtn.addEventListener('click', () => {
                 const targetDegree = parseFloat(degreeInput.value);
                 if (isNaN(targetDegree) || targetDegree < 0 || targetDegree > maxDegree) {
@@ -155,15 +184,41 @@
                     return;
                 }
                 
-                let rank = 1;
-                for (let degStr in degreeCounts) {
+                let higherTotal = 0, higherPassed = 0, higherFailed = 0, higherPostponed = 0;
+                let exactTotal = 0, exactPassed = 0, exactFailed = 0, exactPostponed = 0;
+                
+                for (let degStr in degreeStats) {
                     const degVal = parseFloat(degStr);
+                    const statsForDeg = degreeStats[degStr];
+                    
                     if (degVal > targetDegree) {
-                        rank += degreeCounts[degStr];
+                        higherTotal += statsForDeg.total;
+                        higherPassed += statsForDeg.passed;
+                        higherFailed += statsForDeg.failed;
+                        higherPostponed += statsForDeg.postponed;
+                    } else if (degVal === targetDegree) {
+                        exactTotal = statsForDeg.total;
+                        exactPassed = statsForDeg.passed;
+                        exactFailed = statsForDeg.failed;
+                        exactPostponed = statsForDeg.postponed;
                     }
                 }
                 
+                const rank = higherTotal + 1;
+                
+                // Update UI
                 expectedRank.textContent = '#' + rank.toLocaleString('ar-EG');
+                
+                document.getElementById('exactTotal').textContent = exactTotal.toLocaleString('ar-EG');
+                document.getElementById('exactPassed').textContent = exactPassed.toLocaleString('ar-EG');
+                document.getElementById('exactFailed').textContent = exactFailed.toLocaleString('ar-EG');
+                document.getElementById('exactPostponed').textContent = exactPostponed.toLocaleString('ar-EG');
+                
+                document.getElementById('higherTotal').textContent = higherTotal.toLocaleString('ar-EG');
+                document.getElementById('higherPassed').textContent = higherPassed.toLocaleString('ar-EG');
+                document.getElementById('higherFailed').textContent = higherFailed.toLocaleString('ar-EG');
+                document.getElementById('higherPostponed').textContent = higherPostponed.toLocaleString('ar-EG');
+                
                 calcResult.style.display = 'block';
             });
         });

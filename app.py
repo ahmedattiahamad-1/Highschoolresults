@@ -45,7 +45,7 @@ def load_data():
     failed = 0
     postponed = 0
     top = []
-    degree_counts = {}
+    degree_stats = {}
     
     with gzip.open(data_file_path, 'rt', encoding='utf-8') as f:
         reader = csv.reader(f)
@@ -55,9 +55,12 @@ def load_data():
             count += 1
             status = row[3] if row[3] else ''
             
-            if 'ناجح' in status:
+            is_passed = 'ناجح' in status
+            is_failed = 'راسب' in status or 'دور ثاني' in status
+            
+            if is_passed:
                 passed += 1
-            elif 'راسب' in status or 'دور ثاني' in status:
+            elif is_failed:
                 failed += 1
             else:
                 postponed += 1
@@ -65,7 +68,16 @@ def load_data():
             deg_str = row[2]
             if deg_str:
                 deg = float(deg_str)
-                degree_counts[deg] = degree_counts.get(deg, 0) + 1
+                if deg not in degree_stats:
+                    degree_stats[deg] = {'total': 0, 'passed': 0, 'failed': 0, 'postponed': 0}
+                
+                degree_stats[deg]['total'] += 1
+                if is_passed:
+                    degree_stats[deg]['passed'] += 1
+                elif is_failed:
+                    degree_stats[deg]['failed'] += 1
+                else:
+                    degree_stats[deg]['postponed'] += 1
                 
             rank_str = row[4]
             if rank_str:
@@ -87,7 +99,7 @@ def load_data():
     stats_data['postponed'] = postponed
     top.sort(key=lambda x: x['rank'])
     stats_data['top_students'] = top
-    stats_data['degree_counts'] = degree_counts
+    stats_data['degree_stats'] = degree_stats
     
     print(f"Data loaded successfully. Total students: {total_students}")
 
