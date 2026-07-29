@@ -167,10 +167,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="rank-label">الترتيب</span>
                     <span class="rank-value">#${formattedRank}</span>
                     <span class="rank-total">من ${formattedTotal} طالب</span>
+                    
+                    <div class="card-actions">
+                        <button class="action-btn print-btn" onclick="window.print()" title="طباعة النتيجة">
+                            <i class="ph ph-printer"></i> طباعة
+                        </button>
+                        <button class="action-btn share-btn" onclick="shareResult('${student.name}', '${student.percentage}', '${student.seating_no}')" title="مشاركة النتيجة">
+                            <i class="ph ph-share-network"></i> مشاركة
+                        </button>
+                    </div>
                 </div>
             `;
             
             resultsContainer.appendChild(card);
         });
     }
+
+    // Share result function
+    window.shareResult = function(name, percentage, seatingNo) {
+        const url = window.location.origin + window.location.pathname + '?q=' + seatingNo;
+        if (navigator.share) {
+            navigator.share({
+                title: 'نتيجة الثانوية العامة - ' + name,
+                text: 'حصل ' + name + ' على نسبة ' + percentage + '% في الثانوية العامة!',
+                url: url
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url)
+                .then(() => alert('تم نسخ رابط النتيجة بنجاح!'))
+                .catch(err => console.error('فشل النسخ', err));
+        }
+    };
 });

@@ -371,6 +371,49 @@ body {
     color: var(--text-muted);
 }
 
+.card-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.5rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 99px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.print-btn {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+}
+
+.print-btn:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.share-btn {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.share-btn:hover {
+    background-color: #10b981;
+    color: white;
+}
+
 /* Pagination */
 .pagination-section {
     width: 100%;
@@ -382,10 +425,13 @@ body {
     -webkit-backdrop-filter: blur(12px);
     padding: 0.75rem 1.5rem;
     border-radius: 20px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
     border: 1px solid var(--glass-border);
     margin-top: 1rem;
     margin-bottom: 2rem;
+    position: sticky;
+    bottom: 20px;
+    z-index: 1000;
 }
 
 .pagination-section.hidden {
