@@ -27,9 +27,9 @@ def normalize_arabic(text):
 
 def load_data():
     global df, total_students
-    print("Loading Excel file...")
-    file_path = os.path.join(os.path.dirname(__file__), 'يرو500.xlsx')
-    df = pd.read_excel(file_path)
+    print("Loading CSV file...")
+    file_path = os.path.join(os.path.dirname(__file__), 'data.csv')
+    df = pd.read_csv(file_path)
     
     # Calculate rank based on total_degree
     df['rank'] = df['total_degree'].rank(method='min', ascending=False)
